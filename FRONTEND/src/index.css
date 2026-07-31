@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+/* same colors as your old style.css :root vars, now as Tailwind tokens */
+@theme {
+  --color-bg: #111722;
+  --color-active: #135bec;
+  --color-hover: #111d36;
+  --color-muted: #94a3b8;
+  --color-greeny: #22c55e;
+  --color-yellowy: #f59f0b;
+  --color-redy: #9e1823;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
