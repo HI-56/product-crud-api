@@ -71,7 +71,7 @@ export default function Products() {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:3000/products", {
+      const response = await axios.post("http://localhost:3000/api/v1/products", {
         name: form.name,
         category: form.category,
         price: form.price,
@@ -101,7 +101,7 @@ export default function Products() {
     e.preventDefault();
     try {
       const response = await axios.patch(
-        `http://localhost:3000/products/${editingId}`,
+        `http://localhost:3000/api/v1/products/${editingId}`,
         updateForm,
       );
       await getProducts();
@@ -118,7 +118,7 @@ export default function Products() {
   async function handleRemove(id) {
     try {
       const response = await axios.delete(
-        `http://localhost:3000/products/${id}`,
+        `http://localhost:3000/api/v1/products/${id}`,
       );
 
       getProducts();
