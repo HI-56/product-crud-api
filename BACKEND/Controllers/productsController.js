@@ -93,7 +93,7 @@ export const deleteProductById = async (req, res) => {
     if (!deleted) {
       return res.status(404).json({
         success: false,
-        msg: "Failed to retrieve product",
+        msg: "Failed to delete product",
         error: "no product found match the ID",
       });
     }

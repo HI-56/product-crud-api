@@ -4,20 +4,23 @@ import {
   createUser,
   updatedUser,
   deleteUser,
+  updatedPswd,
 } from "../Services/usersService.js";
 
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await getUsers();
+    const users = await getUsers(req.query);
     if (!users || users.length === 0) {
       return res.status(404).json({
         success: false,
         msg: "Failed to retrieve user",
-        error: "no use found ",
+        error: "no user found ",
       });
     }
     return res.status(200).json({
       success: true,
+      results: users.length,
+      page: req.query.page,
       msg: "users retrieved successfully",
       data: users,
     });
@@ -62,11 +65,10 @@ export const createNewUser = async (req, res) => {
       data: newUser,
     });
   } catch (err) {
-    
     return res.status(500).json({
       success: false,
       msg: "Failed to create new user",
-      
+
       error: "Internal server error",
     });
   }
@@ -91,6 +93,30 @@ export const updateUserById = async (req, res) => {
     return res.status(500).json({
       success: false,
       msg: "Failed to update User",
+      error: "Internal server error",
+    });
+  }
+};
+
+export const updatePswdById = async (req, res) => {
+  try {
+    const updated = await updatedPswd(req.params.id, req.body);
+    if (!updated) {
+      return res.status(404).json({
+        success: false,
+        msg: "Failed to update Password",
+        error: "no User found match the ID",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      msg: "Password updated successfully",
+      data: updated,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      msg: "Failed to update Password",
       error: "Internal server error",
     });
   }

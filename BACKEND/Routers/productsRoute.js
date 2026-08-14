@@ -7,13 +7,17 @@ import {
   deleteProductById,
 } from "../Controllers/productsController.js";
 import { productValidator } from "../Utils/productValidator.js";
+import { protect } from "../Services/authService.js";
 const router = express.Router();
 
-router.route("/").get( getAllProducts).post(productValidator,createNewProduct);
+router
+  .route("/")
+  .get(protect, getAllProducts)
+  .post(protect, productValidator, createNewProduct);
 router
   .route("/:id")
-  .get(getProductById)
-  .patch(updateProductById)
-  .delete(deleteProductById);
+  .get(protect, getProductById)
+  .patch(protect, updateProductById)
+  .delete(protect, deleteProductById);
 
 export default router;
