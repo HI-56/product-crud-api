@@ -1,15 +1,18 @@
 import express from "express";
-import { signup, login } from "../Services/authService.js";
+import {
+  signup,
+  login,
+  forgotPswd,
+  verifyResetCode,
+  resetPswd,
+} from "../Services/authService.js";
 
 const router = express.Router();
 
-router.route("/signup").post(signup);
-router.route("/login").post(login);
-//router.route("/changePswd/:id").patch(passwordUpdateValidator, updatePswdById);
-//router
-//  .route("/:id")
-//  .get(getUserById)
-//  .patch(userUpdateValidator,updateUserById)
-//  .delete(deleteUserById);
+router.post("/signup", signup);
+router.post("/login", login);
+router.post("/forgotPswd", forgotPswd);
+router.post("/verifyResetCode", verifyResetCode);
+router.patch("/resetPswd", resetPswd);
 
 export default router;
