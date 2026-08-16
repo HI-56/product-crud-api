@@ -8,7 +8,7 @@ import {
 
 export const getAllProducts = async (req, res) => {
   try {
-    const products = await getProducts();
+    const products = await getProducts(req.user);
     return res.status(200).json({
       success: true,
       msg: "Products retrieved successfully",
@@ -24,7 +24,7 @@ export const getAllProducts = async (req, res) => {
 };
 export const getProductById = async (req, res) => {
   try {
-    const product = await getProduct(req.params.id);
+    const product = await getProduct(req.params.id,req.user);
     if (!product) {
       return res.status(404).json({
         success: false,
@@ -48,7 +48,7 @@ export const getProductById = async (req, res) => {
 
 export const createNewProduct = async (req, res) => {
   try {
-    const newProduct = await createProduct(req.body);
+    const newProduct = await createProduct(req.body,req.user);
     return res.status(201).json({
       success: true,
       msg: "Product created successfully",

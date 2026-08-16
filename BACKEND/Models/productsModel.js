@@ -13,6 +13,11 @@ const productsShema = new mongoose.Schema(
     status: {
       type: String,
     },
+    user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Users",
+    required: true,
+  },
   },
   { timestamps: true },
 );

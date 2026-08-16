@@ -12,6 +12,7 @@ const router = express.Router();
 
 router.post("/signup", signUpValidation, signup);
 router.post("/login", login);
+
 router.post("/forgotPswd", forgotPswd);
 router.post("/verifyResetCode", verifyResetCode);
 router.patch("/resetPswd", resetPswd);

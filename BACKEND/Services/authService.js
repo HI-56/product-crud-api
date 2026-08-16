@@ -173,3 +173,12 @@ export const resetPswd = async (req, res, next) => {
     message: "password reseted successfuly, now login with new password",
   });
 };
+
+export const me = async (req, res, next) => {
+  try {
+    const user = req.user;
+    res.status(200).json({ success: true, user });
+  } catch (err) {
+    next(new ApiError("get me failed", 404));
+  }
+};
