@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../../context/authContext";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { setUser } = useContext(AuthContext);
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -35,6 +38,7 @@ export default function Login() {
         password: "",
       });
       console.log(response.data.token);
+      setUser(response.data.user);
       setErrorMsg("");
       localStorage.setItem("token", response.data.token);
     } catch (err) {

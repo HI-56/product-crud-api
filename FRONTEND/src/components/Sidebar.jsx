@@ -1,6 +1,10 @@
 import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-// one array instead of 4 copy-pasted <li> blocks across 4 html files
+import { useContext } from "react";
+import { AuthContext } from "../context/authContext";
+import { useEffect } from "react";
+import axios from "axios";
+
 const navItems = [
   { to: "/", icon: "fa-solid fa-chart-pie", label: "Dashboard" },
   { to: "/products", icon: "fa-brands fa-trello", label: "Products" },
@@ -14,7 +18,6 @@ const bottomItems = [
   { to: "/roles", icon: "fa-solid fa-users-gear", label: "Admin Roles" },
 ];
 
-// this one function replaces your whole script.js navigateToPage/removeClass logic
 function NavItem({ to, icon, label }) {
   return (
     <li>
@@ -38,6 +41,32 @@ function NavItem({ to, icon, label }) {
 }
 
 export default function Sidebar() {
+  const { user, setUser } = useContext(AuthContext);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      getCurrentUser();
+    }
+  }, []);
+
+  const getCurrentUser = async () => {
+    try {
+      const { data } = await axios.get(
+        "http://localhost:3000/api/v1/users/me",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      );
+      setUser(data.user);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const navigate = useNavigate();
   return (
     <nav className="fixed h-screen w-62.5 bg-bg text-muted">
@@ -58,8 +87,8 @@ export default function Sidebar() {
 
       <div className="absolute bottom-3.75 left-5 right-5 flex items-center justify-around bg-hover rounded-[10px] p-1.5 text-[10px]">
         <ul className="list-none text-center text-[13px]">
-          <li className="font-bold text-white">Hicham Beloualed</li>
-          <li>Head of Operations</li>
+          {<li className="font-bold text-white">{user?.name}</li>}
+          {<li>{user?.role}</li>}
         </ul>
         <button
           className="text-red-500 border border-red-500 rounded px-2 py-1 hover:bg-red-500 hover:text-white transition-colors cursor-pointer"
