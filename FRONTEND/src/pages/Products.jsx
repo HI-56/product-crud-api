@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 // same status rule your script.js used in submitProducts()
 function statusFromStock(stock) {
@@ -9,18 +10,33 @@ function statusFromStock(stock) {
   return "Out of Stock";
 }
 
+// useEffect(async ()=>{
+// const token = localStorage.getItem("token");
+// const response = axios.post()
+// },[token])
+
 export default function Products() {
-  // 1 state array replaces the `let products = [...]` + manual innerHTML re-renders
+  const navigate = useNavigate();
+  
   const [products, setProducts] = useState([]);
   const [error, setError] = useState("");
 
   const getProducts = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/products");
+      const response = await axios.get(
+        "http://localhost:3000/api/v1/products",
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        },
+      );
       setProducts(response.data.data);
       console.log(response.data.data);
     } catch (error) {
-      setError(error.message);
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        localStorage.removeItem("token");
+        navigate("/landing");
+      }
+      console.log(error);
     }
   };
   useEffect(() => {
@@ -71,20 +87,28 @@ export default function Products() {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:3000/api/v1/products", {
-        name: form.name,
-        category: form.category,
-        price: form.price,
-        stock: form.stock,
-        status: statusFromStock(form.stock),
-      });
+      const response = await axios.post(
+        "http://localhost:3000/api/v1/products",
+
+        {
+          name: form.name,
+          category: form.category,
+          price: form.price,
+          stock: form.stock,
+          status: statusFromStock(form.stock),
+        },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        },
+      );
       getProducts();
       console.log(response.data);
+      setForm({ name: "", category: "", price: "", stock: "" });
+      setShowAdd(false);
     } catch (error) {
       console.log(error.message);
+      setError(error.message);
     }
-    setForm({ name: "", category: "", price: "", stock: "" });
-    setShowAdd(false);
   }
 
   function openUpdate(product) {
@@ -103,11 +127,15 @@ export default function Products() {
       const response = await axios.patch(
         `http://localhost:3000/api/v1/products/${editingId}`,
         updateForm,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        },
       );
       await getProducts();
       console.log(response.data);
     } catch (error) {
       console.log(error.response?.data);
+      setError(error.response?.data);
       console.log(error.response?.status);
     }
 
@@ -119,6 +147,9 @@ export default function Products() {
     try {
       const response = await axios.delete(
         `http://localhost:3000/api/v1/products/${id}`,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        },
       );
 
       getProducts();
@@ -329,6 +360,7 @@ export default function Products() {
             >
               Cancel
             </button>
+            {error && <div className="text-base text-red-500">{error}</div>}
           </form>
         </div>
       )}

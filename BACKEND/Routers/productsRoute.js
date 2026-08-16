@@ -13,11 +13,16 @@ const router = express.Router();
 router
   .route("/")
   .get(protect, allowedTo("user", "admin"), getAllProducts)
-  .post(protect, allowedTo("admin"), productValidator, createNewProduct);
+  .post(
+    protect,
+    allowedTo("user", "admin"),
+    productValidator,
+    createNewProduct,
+  );
 router
   .route("/:id")
-  .get(protect, getProductById)
-  .patch(protect, updateProductById)
-  .delete(protect, deleteProductById);
+  .get(protect,allowedTo("user", "admin"), getProductById)
+  .patch(protect, allowedTo("user", "admin"),updateProductById)
+  .delete(protect, allowedTo("user", "admin"),deleteProductById);
 
 export default router;

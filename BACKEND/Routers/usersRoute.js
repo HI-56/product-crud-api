@@ -12,8 +12,11 @@ import {
   userUpdateValidator,
   passwordUpdateValidator
 } from "../Utils/userValidator.js";
-const router = express.Router();
+import { protect, allowedTo } from "../Services/authService.js";
 
+
+const router = express.Router();
+router.use(protect,allowedTo("admin"))
 router.route("/").get(getAllUsers).post(userCreateValidator, createNewUser);
 router.route("/changePswd/:id").patch(passwordUpdateValidator, updatePswdById);
 router

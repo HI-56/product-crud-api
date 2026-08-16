@@ -45,40 +45,46 @@ export const login = async (req, res, next) => {
 export const protect = async (req, res, next) => {
   let token;
   //check if token exists
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
-  ) {
-    token = req.headers.authorization.split(" ")[1];
-  }
-  if (!token) {
-    return next(new ApiError("You are not logged in, please login again", 401));
-  }
-  //check token(no change or expired token )
-  const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-  //check if user exists
-  const currentUser = await users.findById(decoded.userId);
-  if (!currentUser) {
-    return next(new ApiError("this user is no longer exist", 401));
-  }
-  //check if user change his password after token created
-  if (currentUser.pswdChangeAt) {
-    const pswdChangeAtTimesTamp = parseInt(
-      currentUser.pswdChangeAt.getTime() / 1000,
-      10,
-    );
-    if (pswdChangeAtTimesTamp > decoded.iat) {
+  try {
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer")
+    ) {
+      token = req.headers.authorization.split(" ")[1];
+    }
+    if (!token) {
       return next(
-        new ApiError(
-          "user recently changed his password, please login again...",
-          401,
-        ),
+        new ApiError("You are not logged in, please login again", 401),
       );
     }
+    //check token(no change or expired token )
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    //check if user exists
+    const currentUser = await users.findById(decoded.userId);
+    if (!currentUser) {
+      return next(new ApiError("this user is no longer exist", 401));
+    }
+    //check if user change his password after token created
+    if (currentUser.pswdChangeAt) {
+      const pswdChangeAtTimesTamp = parseInt(
+        currentUser.pswdChangeAt.getTime() / 1000,
+        10,
+      );
+      if (pswdChangeAtTimesTamp > decoded.iat) {
+        return next(
+          new ApiError(
+            "user recently changed his password, please login again...",
+            401,
+          ),
+        );
+      }
+    }
+    //send user to next middleware
+    req.user = currentUser;
+    next();
+  } catch (error) {
+    return next(new ApiError("Invalid or expired token", 401));
   }
-  //send user to next middleware
-  req.user = currentUser;
-  next();
 };
 
 export const allowedTo =
@@ -162,10 +168,8 @@ export const resetPswd = async (req, res, next) => {
   user.passwordResetExpires = undefined;
   user.ResetIsVerefied = undefined;
   await user.save();
-  res
-    .status(200)
-    .json({
-      success: true,
-      message: "password reseted successfuly, now login with new password",
-    });
+  res.status(200).json({
+    success: true,
+    message: "password reseted successfuly, now login with new password",
+  });
 };

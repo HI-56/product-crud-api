@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
 // one array instead of 4 copy-pasted <li> blocks across 4 html files
 const navItems = [
   { to: "/", icon: "fa-solid fa-chart-pie", label: "Dashboard" },
@@ -23,9 +23,11 @@ function NavItem({ to, icon, label }) {
         end={to === "/"}
         className={({ isActive }) =>
           `flex items-center gap-4 h-10.5 w-47.5 px-4 my-2 rounded-md text-[15px] cursor-pointer transition-colors relative
-           ${isActive
-             ? "text-active bg-hover before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-2.5 before:-translate-x-0.75 before:rounded-full before:bg-active before:-z-10"
-             : "text-muted hover:text-active hover:bg-hover"}`
+           ${
+             isActive
+               ? "text-active bg-hover before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-2.5 before:-translate-x-0.75 before:rounded-full before:bg-active before:-z-10"
+               : "text-muted hover:text-active hover:bg-hover"
+           }`
         }
       >
         <i className={icon}></i>
@@ -36,6 +38,7 @@ function NavItem({ to, icon, label }) {
 }
 
 export default function Sidebar() {
+  const navigate = useNavigate();
   return (
     <nav className="fixed h-screen w-62.5 bg-bg text-muted">
       <ul className="text-center list-none w-55 mx-auto mt-2.5 mb-5 p-1.5 text-[13px] rounded-[10px]">
@@ -58,7 +61,13 @@ export default function Sidebar() {
           <li className="font-bold text-white">Hicham Beloualed</li>
           <li>Head of Operations</li>
         </ul>
-        <button className="text-red-500 border border-red-500 rounded px-2 py-1 hover:bg-red-500 hover:text-white transition-colors">
+        <button
+          className="text-red-500 border border-red-500 rounded px-2 py-1 hover:bg-red-500 hover:text-white transition-colors cursor-pointer"
+          onClick={() => {
+            localStorage.removeItem("token");
+            navigate("/landing");
+          }}
+        >
           <i className="fa-solid fa-arrow-right-from-bracket"></i>
         </button>
       </div>
