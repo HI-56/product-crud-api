@@ -49,3 +49,8 @@ export const updatedPswd = async (id, body) => {
 export const deleteUser = async (id) => {
   return await users.findOneAndDelete({ _id: id });
 };
+
+export const getMe = async (req, res, next) => {
+  req.params.id = req.user._id;
+  next();
+};

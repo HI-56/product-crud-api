@@ -12,12 +12,13 @@ import {
   userUpdateValidator,
   passwordUpdateValidator,
 } from "../Utils/userValidator.js";
-import { protect, allowedTo, me } from "../Services/authService.js";
+import { protect, allowedTo } from "../Services/authService.js";
+import { getMe } from "../Services/usersService.js";
 
 const router = express.Router();
-router.use(protect, allowedTo("admin","user"));
+router.use(protect, allowedTo("admin", "user"));
 router.route("/").get(getAllUsers).post(userCreateValidator, createNewUser);
-router.route("/me").get(protect, me);
+router.route("/me").get(protect, getMe, getUserById);
 router.route("/changePswd/:id").patch(passwordUpdateValidator, updatePswdById);
 router
   .route("/:id")

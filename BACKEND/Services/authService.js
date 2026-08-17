@@ -164,6 +164,7 @@ export const resetPswd = async (req, res, next) => {
     return next(new ApiError("reset code not verefied", 400));
   }
   user.password = req.body.newPassword;
+  user.pswdChangeAt = Date.now();
   user.passwordResetCode = undefined;
   user.passwordResetExpires = undefined;
   user.ResetIsVerefied = undefined;
@@ -172,13 +173,4 @@ export const resetPswd = async (req, res, next) => {
     success: true,
     message: "password reseted successfuly, now login with new password",
   });
-};
-
-export const me = async (req, res, next) => {
-  try {
-    const user = req.user;
-    res.status(200).json({ success: true, user });
-  } catch (err) {
-    next(new ApiError("get me failed", 404));
-  }
 };
