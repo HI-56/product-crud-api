@@ -6,16 +6,20 @@ import { useEffect } from "react";
 import axios from "axios";
 
 const navItems = [
-  { to: "/", icon: "fa-solid fa-chart-pie", label: "Dashboard" },
-  { to: "/products", icon: "fa-brands fa-trello", label: "Products" },
-  { to: "/orders", icon: "fa-solid fa-cart-arrow-down", label: "Orders" },
-  { to: "/customers", icon: "fa-solid fa-user-group", label: "Customers" },
-  { to: "/analytics", icon: "fa-solid fa-chart-column", label: "Analytics" },
+  { to: "/app", icon: "fa-solid fa-chart-pie", label: "Dashboard" },
+  { to: "/app/products", icon: "fa-brands fa-trello", label: "Products" },
+  { to: "/app/orders", icon: "fa-solid fa-cart-arrow-down", label: "Orders" },
+  { to: "/app/customers", icon: "fa-solid fa-user-group", label: "Customers" },
+  {
+    to: "/app/analytics",
+    icon: "fa-solid fa-chart-column",
+    label: "Analytics",
+  },
 ];
 
 const bottomItems = [
-  { to: "/settings", icon: "fa-solid fa-gear", label: "Settings" },
-  { to: "/roles", icon: "fa-solid fa-users-gear", label: "Admin Roles" },
+  { to: "/app/settings", icon: "fa-solid fa-gear", label: "Settings" },
+  { to: "/app/roles", icon: "fa-solid fa-users-gear", label: "Admin Roles" },
 ];
 
 function NavItem({ to, icon, label }) {
@@ -42,31 +46,7 @@ function NavItem({ to, icon, label }) {
 
 export default function Sidebar() {
   const { user, setUser } = useContext(AuthContext);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (token) {
-      getCurrentUser();
-    }
-  }, []);
-
-  const getCurrentUser = async () => {
-    try {
-      const { data } = await axios.get(
-        "http://localhost:3000/api/v1/users/me",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        },
-      );
-      setUser(data.user);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
+  console.log(user);
   const navigate = useNavigate();
   return (
     <nav className="fixed h-screen w-62.5 bg-bg text-muted">
@@ -94,7 +74,8 @@ export default function Sidebar() {
           className="text-red-500 border border-red-500 rounded px-2 py-1 hover:bg-red-500 hover:text-white transition-colors cursor-pointer"
           onClick={() => {
             localStorage.removeItem("token");
-            navigate("/landing");
+            navigate("/");
+            setUser(null);
           }}
         >
           <i className="fa-solid fa-arrow-right-from-bracket"></i>

@@ -21,7 +21,7 @@ export default function ResetCode() {
       setLoading(false);
       setResetCode("");
       console.log(response);
-      navigate("/resetPswd");
+      navigate("/auth/resetPswd");
     } catch (err) {
       setLoading(false);
       console.log(err.response?.data);

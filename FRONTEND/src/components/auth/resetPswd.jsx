@@ -23,7 +23,7 @@ export default function ResetPswd() {
       setNewPassword("");
       console.log(response);
       localStorage.removeItem("email");
-      navigate("/landing");
+      navigate("/");
     } catch (err) {
       setLoading(false);
       console.log(err.response?.data);

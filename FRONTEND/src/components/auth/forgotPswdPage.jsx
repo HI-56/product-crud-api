@@ -22,7 +22,8 @@ export default function ForgotPswd() {
       setEmail("");
       console.log(response);
       localStorage.setItem("email", email);
-      navigate("/verifyResetCode");
+      setErrorMsg("");
+      navigate("/auth/verifyResetCode");
     } catch (err) {
       setLoading(false);
       console.log(err.response?.data.error);

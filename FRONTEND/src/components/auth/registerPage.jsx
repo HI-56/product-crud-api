@@ -28,6 +28,7 @@ export default function Register() {
         email: "",
         password: "",
       });
+      setErrorMsg("");
       console.log(response.data.token);
     } catch (err) {
       setLoading(false);
@@ -91,7 +92,7 @@ export default function Register() {
         <div>
           <button
             className="text-base font-semibold border border-blue-400 bg-blue-400/15 rounded-xl px-3 p-1 mt-10  hover:bg-blue-600/40 hover:text-white text-cyan-400 transition-all duration-300 cursor-pointer"
-            onClick={() => navigate("/landing")}
+            onClick={() => navigate("/")}
           >
             Back to login
           </button>
