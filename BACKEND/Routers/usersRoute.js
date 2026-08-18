@@ -13,17 +13,47 @@ import {
   passwordUpdateValidator,
 } from "../Utils/userValidator.js";
 import { protect, allowedTo } from "../Services/authService.js";
-import { getMe } from "../Services/usersService.js";
+import {
+  getMe,
+  updateLogedUserPswd,
+  updateLogedUser,
+  deleteLogedUser,
+} from "../Services/usersService.js";
 
 const router = express.Router();
-router.use(protect, allowedTo("admin", "user"));
+
+router.use(protect);
+
+// routes for each user to manage his owen account
+router
+  .route("/me")
+  .get(allowedTo("admin", "user"), getMe, getUserById)
+  .patch(
+    allowedTo("admin", "user"),
+    userUpdateValidator,
+    updateLogedUser,
+    updateUserById,
+  )
+  .delete(allowedTo("admin", "user"), deleteLogedUser, deleteUserById);
+
+router
+  .route("/updatePswd")
+  .patch(
+    allowedTo("admin", "user"),
+    passwordUpdateValidator,
+    updateLogedUserPswd,
+  );
+
+// routes for manage all users (only admin)
+router.use(protect, allowedTo("admin"));
 router.route("/").get(getAllUsers).post(userCreateValidator, createNewUser);
-router.route("/me").get(protect, getMe, getUserById);
-router.route("/changePswd/:id").patch(passwordUpdateValidator, updatePswdById);
+
 router
   .route("/:id")
   .get(getUserById)
   .patch(userUpdateValidator, updateUserById)
   .delete(deleteUserById);
+
+router.route("/changePswd/:id").patch(passwordUpdateValidator, updatePswdById);
 
 export default router;

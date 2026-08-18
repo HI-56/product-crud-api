@@ -65,7 +65,7 @@ export const createNewProduct = async (req, res) => {
 
 export const updateProductById = async (req, res) => {
   try {
-    const updated = await updatedProduct(req.params.id, req.body);
+    const updated = await updatedProduct(req.params.id, req.body,req.user);
     if (!updated) {
       return res.status(404).json({
         success: false,
@@ -89,7 +89,7 @@ export const updateProductById = async (req, res) => {
 
 export const deleteProductById = async (req, res) => {
   try {
-    const deleted = await deleteProduct(req.params.id);
+    const deleted = await deleteProduct(req.params.id,req.user);
     if (!deleted) {
       return res.status(404).json({
         success: false,

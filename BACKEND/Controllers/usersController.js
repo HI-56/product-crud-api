@@ -34,7 +34,9 @@ export const getAllUsers = async (req, res) => {
 };
 export const getUserById = async (req, res) => {
   try {
+    console.log(req.params.id);
     const user = await getUser(req.params.id);
+
     if (!user) {
       return res.status(404).json({
         success: false,

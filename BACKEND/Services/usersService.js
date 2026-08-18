@@ -1,5 +1,8 @@
 import users from "../Models/usersModel.js";
+import products from "../Models/productsModel.js";
+import jwt from "jsonwebtoken";
 import bcrypt, { hash } from "bcryptjs";
+import { ApiError } from "../Utils/apiError.js";
 
 export const getUsers = async (query) => {
   const limit = parseInt(query.limit) || 10;
@@ -47,10 +50,43 @@ export const updatedPswd = async (id, body) => {
   );
 };
 export const deleteUser = async (id) => {
+  await products.deleteMany({ user: id });
   return await users.findOneAndDelete({ _id: id });
 };
 
 export const getMe = async (req, res, next) => {
+  req.params.id = req.user._id;
+  next();
+};
+
+export const updateLogedUserPswd = async (req, res, next) => {
+  try {
+    const user = await users.findOneAndUpdate(
+      { _id: req.user._id },
+      {
+        $set: {
+          password: await bcrypt.hash(req.body.password, 12),
+          pswdChangeAt: Date.now(),
+        },
+      },
+      {
+        returnDocument: "after",
+      },
+    );
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET_KEY, {
+      expiresIn: process.env.JWT_EXPIRE_TIME,
+    });
+    res.status(200).json({ success: true, user, token });
+  } catch (err) {
+    next(new ApiError("password update failed", 500));
+  }
+};
+
+export const updateLogedUser = async (req, res, next) => {
+  req.params.id = req.user._id;
+  next();
+};
+export const deleteLogedUser = async (req, res, next) => {
   req.params.id = req.user._id;
   next();
 };

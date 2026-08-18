@@ -28,8 +28,7 @@ export const userCreateValidator = [
   Validator,
 ];
 export const userUpdateValidator = [
-  check("name").notEmpty().withMessage("you should enter a valide name"),
-  check("email").custom((value) => {
+  check("email").optional().custom((value) => {
     if (!value.includes("@")) {
       throw new Error("invalid email");
     }
