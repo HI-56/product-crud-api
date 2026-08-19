@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 import { ApiError } from "../Utils/apiError.js";
 import sendEamil from "../Utils/sendEmail.js";
 
+
 export const signup = async (req, res, next) => {
   try {
     const user = await users.create({
@@ -33,6 +34,7 @@ export const login = async (req, res, next) => {
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET_KEY, {
       expiresIn: process.env.JWT_EXPIRE_TIME,
     });
+ 
     res.status(200).json({
       user,
       token,

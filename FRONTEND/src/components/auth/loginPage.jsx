@@ -24,7 +24,6 @@ export default function Login() {
   if (user) {
     return <Navigate to="/app" replace />;
   }
-  
 
   const handelSubmit = async (e) => {
     e.preventDefault();
@@ -52,12 +51,12 @@ export default function Login() {
   return (
     <>
       <div className=" min-h-screen z-9999 fixed top-0 right-0 left-0 gap-5 flex flex-col justify-center items-center bg-bg ">
-        <div className="text-3xl font-bold text-cyan-400 underline-offset-8 underline">
-          <h4> LOGIN</h4>
-        </div>
-        <div className="w-1/2 bg-white flex flex-col p-3">
+        <div className="w-1/2 bg-white flex flex-col p-3 rounded-3xl justify-center items-center">
+          <div className="text-3xl font-bold text-cyan-400 underline-offset-8 underline">
+            <h4> Welcome Back</h4>
+          </div>
           <form
-            className="flex  flex-col gap-4 rounded-lg bg-white p-6 shadow-lg"
+            className="flex  flex-col gap-4 rounded-lg bg-white p-6 shadow-lg w-full"
             onSubmit={handelSubmit}
           >
             <div>

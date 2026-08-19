@@ -17,20 +17,21 @@ function statusFromStock(stock) {
 
 export default function Products() {
   const navigate = useNavigate();
-  
+
   const [products, setProducts] = useState([]);
   const [error, setError] = useState("");
-
+  const [page, setPage] = useState(1);
+  const [thisPage, setThisPage] = useState(1);
   const getProducts = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/v1/products",
+        `http://localhost:3000/api/v1/products/?page=${page}&limit=7`,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         },
       );
       setProducts(response.data.data);
-      console.log(response.data.data);
+      setThisPage(response.data.page);
     } catch (error) {
       if (error.response?.status === 401 || error.response?.status === 403) {
         localStorage.removeItem("token");
@@ -41,7 +42,7 @@ export default function Products() {
   };
   useEffect(() => {
     getProducts();
-  }, []);
+  }, [page]);
 
   const [search, setSearch] = useState("");
   const [category, setcategory] = useState("");
@@ -73,15 +74,21 @@ export default function Products() {
   const filteredProducts = useMemo(() => {
     return products.filter((p) => {
       const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
-      const matchescategory = category ? p.category === category : true;
-      const matchesStatus = status ? p.status === status : true;
+      const matchescategory = category
+        ? p.category.toLowerCase() === category.toLowerCase()
+        : true;
+      const matchesStatus = status ? p.status.toLowerCase() === status.toLowerCase() : true;
       return matchesSearch && matchescategory && matchesStatus;
     });
   }, [products, search, category, status]);
 
   const inCount = products.length;
-  const lowCount = products.filter((p) => p.status === "Low Stock").length;
-  const outCount = products.filter((p) => p.status === "Out of Stock").length;
+  const lowCount = products.filter(
+    (p) => p.status.toLowerCase() === "low stock",
+  ).length;
+  const outCount = products.filter(
+    (p) => p.status.toLowerCase() === "out of stock",
+  ).length;
 
   async function handleAddSubmit(e) {
     e.preventDefault();
@@ -264,6 +271,31 @@ export default function Products() {
             )}
           </tbody>
         </table>
+        <div className="mb-8">
+          <div className="flex flex-row justify-end px-5 gap-8">
+            <span
+              className="border border-cyan-400 rounded-2xl cursor-pointer px-5 pb-1"
+              onClick={() => {
+                if (page > 1) {
+                  setPage((prev) => prev - 1);
+                }
+              }}
+            >
+              prev
+            </span>
+            <span>Page N°{thisPage}</span>
+            <span
+              className="border border-cyan-400 rounded-2xl cursor-pointer px-5 pb-1"
+              onClick={() => {
+                if (products.length === 7) {
+                  setPage((prev) => prev + 1);
+                }
+              }}
+            >
+              next
+            </span>
+          </div>
+        </div>
 
         <div className="flex justify-center gap-12 flex-wrap">
           <div className="h-20 w-75 bg-bg border border-muted rounded-[20px] flex items-center gap-10 px-5">

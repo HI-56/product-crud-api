@@ -1,7 +1,10 @@
 import products from "../Models/productsModel.js";
 
-export const getProducts = async (user) => {
-  return await products.find({ user: user._id });
+export const getProducts = async (user,query) => {
+  const limit = parseInt(query.limit) || 10;
+  const page = parseInt(query.page) || 1;
+  const skip = limit * (page - 1);
+  return await products.find({ user: user._id }).skip(skip).limit(limit);
 };
 
 export const getProduct = async (id, user) => {

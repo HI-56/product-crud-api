@@ -13,5 +13,14 @@ export const signUpValidation = [
     }
     return true;
   }),
+  body("confirmePswd")
+    .notEmpty()
+    .withMessage("the confirme password is empty")
+    .custom((value, { req }) => {
+      if (value != req.body.password) {
+        throw new Error("enter password correctly ");
+      }
+      return true;
+    }),
   Validator,
 ];

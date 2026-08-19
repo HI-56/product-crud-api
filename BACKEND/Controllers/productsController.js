@@ -8,9 +8,10 @@ import {
 
 export const getAllProducts = async (req, res) => {
   try {
-    const products = await getProducts(req.user);
+    const products = await getProducts(req.user,req.query);
     return res.status(200).json({
       success: true,
+      page : req.query.page,
       msg: "Products retrieved successfully",
       data: products,
     });
