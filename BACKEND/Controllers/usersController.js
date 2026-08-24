@@ -6,6 +6,7 @@ import {
   deleteUser,
   updatedPswd,
 } from "../Services/usersService.js";
+import users from "../Models/usersModel.js";
 
 export const getAllUsers = async (req, res) => {
   try {
@@ -34,7 +35,6 @@ export const getAllUsers = async (req, res) => {
 };
 export const getUserById = async (req, res) => {
   try {
-    
     const user = await getUser(req.params.id);
 
     if (!user) {
@@ -145,5 +145,24 @@ export const deleteUserById = async (req, res) => {
       msg: "Failed to delete User",
       error: "Internal server error",
     });
+  }
+};
+
+export const uploadAvatar = async (req, res, next) => {
+  try {
+    const user = await users.findOneAndUpdate(
+      req.user._id,
+      { avatar: req.file.path },
+      {
+        returnDocument: "after",
+      },
+    );
+
+    res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    next(error);
   }
 };

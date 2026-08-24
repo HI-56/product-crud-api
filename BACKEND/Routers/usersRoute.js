@@ -6,6 +6,7 @@ import {
   updateUserById,
   updatePswdById,
   deleteUserById,
+  uploadAvatar,
 } from "../Controllers/usersController.js";
 import {
   userCreateValidator,
@@ -19,6 +20,7 @@ import {
   updateLogedUser,
   deleteLogedUser,
 } from "../Services/usersService.js";
+import upload from "../middlewares/uploadMiddleware.js";
 
 const router = express.Router();
 
@@ -35,6 +37,7 @@ router
     updateUserById,
   )
   .delete(allowedTo("admin", "user"), deleteLogedUser, deleteUserById);
+router.post("/upload", upload.single("avatar"), uploadAvatar);
 
 router
   .route("/updatePswd")
