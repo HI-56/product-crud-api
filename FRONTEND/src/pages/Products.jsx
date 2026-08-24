@@ -19,34 +19,60 @@ export default function Products() {
   const navigate = useNavigate();
 
   const [products, setProducts] = useState([]);
+  const [filtration, setFiltration] = useState([]);
   const [error, setError] = useState("");
   const [page, setPage] = useState(1);
   const [thisPage, setThisPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [category, setcategory] = useState("");
+  const [status, setStatus] = useState("");
+  const [inCount, setInCount] = useState(0);
+  const [lowCount, setLowCount] = useState(0);
+  const [outCount, setOutCount] = useState(0);
+
   const getProducts = async () => {
     try {
+      const params = new URLSearchParams();
+
+      params.set("page", page);
+      params.set("limit", 7);
+
+      if (category) {
+        params.set("category", category);
+      }
+
+      if (search) {
+        params.set("search", search);
+      }
+
+      if (status) {
+        params.set("status", status);
+      }
+
       const response = await axios.get(
-        `http://localhost:3000/api/v1/products/?page=${page}&limit=7`,
+        `http://localhost:3000/api/v1/products/?${params.toString()}`,
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         },
       );
+      navigate(`/app/products/?${params.toString()}`);
       setProducts(response.data.data);
       setThisPage(response.data.page);
+      setInCount(response.data.totalProducts);
+      setLowCount(response.data.LowStockProducts);
+      setOutCount(response.data.OutOfStockProducts);
     } catch (error) {
       if (error.response?.status === 401 || error.response?.status === 403) {
         localStorage.removeItem("token");
         navigate("/landing");
       }
-      console.log(error);
     }
   };
   useEffect(() => {
     getProducts();
-  }, [page]);
-
-  const [search, setSearch] = useState("");
-  const [category, setcategory] = useState("");
-  const [status, setStatus] = useState("");
+  }, [page, search, category, status]);
 
   const [showAdd, setShowAdd] = useState(false);
   const [showUpdate, setShowUpdate] = useState(false);
@@ -65,31 +91,6 @@ export default function Products() {
     category: "",
     price: "",
   });
-
-  // replaces every `window.localStorage.setItem("products", ...)` call scattered
-  // through script.js — this runs once, automatically, whenever products changes
-
-  // replaces render()/TableBodyFill() + the 3 separate change listeners
-  // (search, category, status) that each independently re-rendered the table
-  const filteredProducts = useMemo(() => {
-    return products.filter((p) => {
-      const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
-      const matchescategory = category
-        ? p.category.toLowerCase() === category.toLowerCase()
-        : true;
-      const matchesStatus = status ? p.status.toLowerCase() === status.toLowerCase() : true;
-      return matchesSearch && matchescategory && matchesStatus;
-    });
-  }, [products, search, category, status]);
-
-  const inCount = products.length;
-  const lowCount = products.filter(
-    (p) => p.status.toLowerCase() === "low stock",
-  ).length;
-  const outCount = products.filter(
-    (p) => p.status.toLowerCase() === "out of stock",
-  ).length;
-
   async function handleAddSubmit(e) {
     e.preventDefault();
 
@@ -109,7 +110,6 @@ export default function Products() {
         },
       );
       getProducts();
-      console.log(response.data);
       setForm({ name: "", category: "", price: "", stock: "" });
       setShowAdd(false);
     } catch (error) {
@@ -186,12 +186,18 @@ export default function Products() {
               type="text"
               placeholder="Search by product name..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setPage(1);
+                setSearch(e.target.value);
+              }}
               className="bg-bg border border-muted rounded-lg text-white m-1.5 p-1.5 w-62.5 focus:border-2 focus:border-active outline-none"
             />
             <select
               value={category}
-              onChange={(e) => setcategory(e.target.value)}
+              onChange={(e) => {
+                setPage(1);
+                setcategory(e.target.value);
+              }}
               className="bg-bg border border-muted rounded-lg text-white m-1.5 p-1.5 focus:border-2 focus:border-active outline-none"
             >
               <option value="">All Categories</option>
@@ -201,7 +207,10 @@ export default function Products() {
             </select>
             <select
               value={status}
-              onChange={(e) => setStatus(e.target.value)}
+              onChange={(e) => {
+                setPage(1);
+                setStatus(e.target.value);
+              }}
               className="bg-bg border border-muted rounded-lg text-white m-1.5 p-1.5 focus:border-2 focus:border-active outline-none"
             >
               <option value="">Stock Status</option>
@@ -231,14 +240,14 @@ export default function Products() {
             </tr>
           </thead>
           <tbody>
-            {filteredProducts.length === 0 ? (
+            {products.length === 0 ? (
               <tr>
                 <td colSpan={7} className="text-center p-4">
                   No Product Found !!
                 </td>
               </tr>
             ) : (
-              filteredProducts.map((p) => (
+              products.map((p) => (
                 <tr
                   key={p._id}
                   className="border-b border-gray-300 even:bg-slate-800/70 hover:bg-active cursor-pointer"

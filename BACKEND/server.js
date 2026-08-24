@@ -5,6 +5,7 @@ import dns from "dns";
 import productRouter from "./Routers/productsRoute.js";
 import userRouter from "./Routers/usersRoute.js";
 import authRouter from "./Routers/authRouter.js";
+import { errorHandler } from "./middlewares/errorHandler.js";
 import cors from "cors";
 
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
@@ -17,8 +18,8 @@ app.use(express.json());
 app.use("/api/v1/products", productRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/auth", authRouter);
+app.use(errorHandler);
 app.use((err, req, res, next) => {
-
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal Server Error";
 
@@ -29,5 +30,5 @@ app.use((err, req, res, next) => {
   });
 });
 app.listen(process.env.PORT, () => {
-  console.log(`it is running on port ${process.env.PORT}`);
+  console.log(`server is running on port ${process.env.PORT}`);
 });
