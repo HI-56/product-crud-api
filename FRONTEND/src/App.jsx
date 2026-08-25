@@ -11,6 +11,8 @@ import ForgotPswd from "./components/auth/forgotPswdPage";
 import ResetCode from "./components/auth/verifyResetCode";
 import ResetPswd from "./components/auth/resetPswd";
 import ProtectedRoute from "./components/protectedRoute";
+import AdminRoles from "./pages/adminRoles";
+import UserDetail from "./pages/userDetail";
 
 export default function App() {
   return (
@@ -31,6 +33,10 @@ export default function App() {
           <Route path="products" element={<Products />} />
           <Route path="orders" element={<Orders />} />
           <Route path="customers" element={<Customers />} />
+          <Route path="users">
+            <Route index element={<AdminRoles />} />
+            <Route path=":userId" element={<UserDetail />}></Route>
+          </Route>
         </Route>
       </Route>
     </Routes>

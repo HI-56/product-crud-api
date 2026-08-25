@@ -23,7 +23,7 @@ export const getAllUsers = async (req, res) => {
       results: users.length,
       page: req.query.page,
       msg: "users retrieved successfully",
-      data: users,
+      users,
     });
   } catch (err) {
     return res.status(500).json({
@@ -47,7 +47,7 @@ export const getUserById = async (req, res) => {
     return res.status(200).json({
       success: true,
       msg: "user retrieved successfully",
-      data: user,
+      user,
     });
   } catch (err) {
     return res.status(500).json({

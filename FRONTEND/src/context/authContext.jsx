@@ -20,9 +20,8 @@ export function AuthProvider({ children }) {
           },
         },
       );
-
-      setUser(data.data);
-      console.log(data);
+      console.log("ME:", data);
+      setUser(data.user);
     } catch (error) {
       if (error.response?.status === 401) {
         localStorage.removeItem("token");

@@ -8,7 +8,7 @@ export const getUsers = async (query) => {
   const limit = parseInt(query.limit) || 10;
   const page = parseInt(query.page) || 1;
   const skip = limit * (page - 1);
-  return await users.find({}).skip(skip).limit(limit);
+  return await users.find({ role: "user" }).skip(skip).limit(limit);
 };
 
 export const getUser = async (id) => {

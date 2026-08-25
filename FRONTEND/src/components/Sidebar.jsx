@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../context/authContext";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 
 const navItems = [
@@ -15,11 +16,6 @@ const navItems = [
     icon: "fa-solid fa-chart-column",
     label: "Analytics",
   },
-];
-
-const bottomItems = [
-  { to: "/app/settings", icon: "fa-solid fa-gear", label: "Settings" },
-  { to: "/app/roles", icon: "fa-solid fa-users-gear", label: "Admin Roles" },
 ];
 
 function NavItem({ to, icon, label }) {
@@ -48,6 +44,18 @@ export default function Sidebar() {
   const { user, setUser } = useContext(AuthContext);
   console.log(user);
   const navigate = useNavigate();
+
+  const bottomItems = [
+    { to: "/app/settings", icon: "fa-solid fa-gear", label: "Settings" },
+    user.role == "admin"
+      ? {
+          to: "/app/users",
+          icon: "fa-solid fa-users-gear",
+          label: "Admin Roles",
+        }
+      : "",
+  ];
+
   return (
     <nav className="fixed h-screen w-62.5 bg-bg text-muted">
       <ul className="text-center list-none w-55 mx-auto mt-2.5 mb-5 p-1.5 text-[13px] rounded-[10px]">
@@ -60,16 +68,16 @@ export default function Sidebar() {
           <NavItem key={item.to} {...item} />
         ))}
         <p className="mt-4 mb-2 pl-4 text-xs">MANAGMENT</p>
-        {bottomItems.map((item) => (
-          <NavItem key={item.to} {...item} />
-        ))}
+        {bottomItems.map((item) => {
+          if (item) return <NavItem key={item.to} {...item} />;
+        })}
       </ul>
 
       <div className="absolute bottom-3.75 left-5 right-5 flex items-center justify-around bg-hover rounded-[10px] p-1.5 text-[10px]">
-        <ul className="list-none text-center text-[13px]">
+        <Link to={`/app/users/${user?._id}`} className="list-none text-center text-[13px] cursor-pointer">
           {<li className="font-bold text-white">{user?.name}</li>}
           {<li>{user?.role}</li>}
-        </ul>
+        </Link>
         <button
           className="text-red-500 border border-red-500 rounded px-2 py-1 hover:bg-red-500 hover:text-white transition-colors cursor-pointer"
           onClick={() => {
