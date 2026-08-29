@@ -18,7 +18,11 @@ export default function Login() {
   const token = localStorage.getItem("token");
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="bg-bg min-h-screen flex justify-center items-center text-2xl text-white">
+        Loading...
+      </div>
+    );
   }
 
   if (user) {

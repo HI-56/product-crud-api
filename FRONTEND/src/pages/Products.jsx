@@ -100,10 +100,10 @@ export default function Products() {
 
         {
           name: form.name,
-          category: form.category,
+          category: form.category.toLowerCase(),
           price: form.price,
           stock: form.stock,
-          status: statusFromStock(form.stock),
+          status: statusFromStock(form.stock).toLowerCase(),
         },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },

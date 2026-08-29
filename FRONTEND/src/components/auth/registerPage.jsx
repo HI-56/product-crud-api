@@ -8,6 +8,7 @@ export default function Register() {
     name: "",
     email: "",
     password: "",
+    confirmePswd: "",
   });
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,6 +28,7 @@ export default function Register() {
         name: "",
         email: "",
         password: "",
+        confirmePswd: "",
       });
       setErrorMsg("");
       console.log(response.data.token);
@@ -39,7 +41,9 @@ export default function Register() {
   return (
     <>
       <div className=" min-h-screen z-9999 fixed top-0 right-0 left-0 gap-5 flex flex-col justify-center items-center bg-bg ">
-          <div className="text-3xl font-bold text-cyan-400 underline-offset-8 underline"><h4> SIGNUP</h4></div>
+        <div className="text-3xl font-bold text-cyan-400 underline-offset-8 underline">
+          <h4> SIGNUP</h4>
+        </div>
         <form
           className="flex w-1/2 flex-col gap-4 rounded-lg bg-white p-6 shadow-lg"
           onSubmit={handelSubmit}
@@ -76,6 +80,19 @@ export default function Register() {
               name="password"
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
+              className="w-full rounded border p-2"
+            />
+          </div>
+          <div>
+            <label htmlFor="confirmePswd">Confirm Password</label>
+            <input
+              id="confirmePswd"
+              type="password"
+              name="confirmePswd"
+              value={form.confirmePswd}
+              onChange={(e) =>
+                setForm({ ...form, confirmePswd: e.target.value })
+              }
               className="w-full rounded border p-2"
             />
           </div>
