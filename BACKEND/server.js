@@ -14,10 +14,14 @@ DBconnect();
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use("/uploads", express.static("uploads"));
+
 
 app.use("/api/v1/products", productRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/auth", authRouter);
+
+
 app.use(errorHandler);
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;

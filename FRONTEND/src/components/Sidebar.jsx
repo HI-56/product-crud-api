@@ -74,7 +74,10 @@ export default function Sidebar() {
       </ul>
 
       <div className="absolute bottom-3.75 left-5 right-5 flex items-center justify-around bg-hover rounded-[10px] p-1.5 text-[10px]">
-        <Link to={`/app/users/${user?._id}`} className="list-none text-center text-[13px] cursor-pointer">
+        <Link
+          to={`/app/users/me`}
+          className="list-none text-center text-[13px] cursor-pointer"
+        >
           {<li className="font-bold text-white">{user?.name}</li>}
           {<li>{user?.role}</li>}
         </Link>

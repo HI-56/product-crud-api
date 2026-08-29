@@ -82,7 +82,7 @@ export const updateUserById = async (req, res) => {
     if (!updated) {
       return res.status(404).json({
         success: false,
-        msg: "Failed to retrieve product",
+        msg: "Failed to update product",
         error: "no User found match the ID",
       });
     }
