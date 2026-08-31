@@ -1,3 +1,4 @@
+import fs from "fs/promises";
 import {
   getUsers,
   getUser,
@@ -150,14 +151,13 @@ export const deleteUserById = async (req, res) => {
 
 export const uploadAvatar = async (req, res, next) => {
   try {
-    const user = await users.findOneAndUpdate(
-      req.user._id,
-      { avatar: req.file.path },
-      {
-        returnDocument: "after",
-      },
-    );
-
+    const user = await users.findById(req.user._id);
+    const oldAvatar = user.avatar;
+    user.avatar = req.file.path;
+    await user.save();
+    if (oldAvatar) {
+      await fs.unlink(oldAvatar);
+    }
     res.status(200).json({
       success: true,
       user,

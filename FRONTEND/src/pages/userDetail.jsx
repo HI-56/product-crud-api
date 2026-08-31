@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import Edit from "../components/editUser";
+import EditMyInfo from "../components/editOwenInfo";
+import EditUsersInfo from "../components/adminEditUsers";
+
 
 export default function UserDetail() {
   const { userId } = useParams();
   const [userInfo, setUserInfo] = useState({});
   const [error, setError] = useState("");
   const [open, setOpen] = useState(false);
-  const endpoint = userId ? userId : "me";
+  const endPoint = userId ? userId : "me";
 
   const showError = (message) => {
     setError(message);
@@ -21,7 +23,7 @@ export default function UserDetail() {
   const getUserInfo = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/v1/users/${endpoint}`,
+        `http://localhost:3000/api/v1/users/${endPoint}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -69,20 +71,20 @@ export default function UserDetail() {
               </span>
             </div>
 
-            {endpoint === "me" ? (
-              <>
-                {" "}
-                <div
-                  className=" text-active  h-8 w-12 cursor-pointer -mr-10 rounded-xl px-2 border-active bg-active/10  "
-                  onClick={() => setOpen(true)}
-                >
-                  edit
-                </div>
-                <Edit open={open} setOpen={setOpen} />
-              </>
-            ) : (
-              ""
-            )}
+            <>
+              {" "}
+              <div
+                className=" text-active  h-8 w-12 cursor-pointer -mr-10 rounded-xl px-2 border-active bg-active/10  "
+                onClick={() => setOpen(true)}
+              >
+                edit
+              </div>
+              {endPoint === "me" ? (
+                      <EditMyInfo open={open} setOpen={setOpen} />
+                    ) : (
+                      <EditUsersInfo open={open} setOpen={setOpen} endPoint={endPoint} />
+                    )}
+            </>
           </div>
           <div className="mt-5 flex flex-col ">
             <div className="flex gap-10 py-3 items-center">

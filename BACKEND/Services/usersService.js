@@ -27,6 +27,7 @@ export const updatedUser = async (id, body) => {
         name: body.name,
         email: body.email,
         phone: body.phone,
+        role: body.role,
       },
     },
     {
@@ -83,8 +84,39 @@ export const updateLogedUserPswd = async (req, res, next) => {
 };
 
 export const updateLogedUser = async (req, res, next) => {
-  req.params.id = req.user._id;
-  next();
+  try {
+    const user = await users.findOneAndUpdate(
+      { _id: req.user._id },
+      {
+        $set: {
+          name: body.name,
+          email: body.email,
+          phone: body.phone,
+        },
+      },
+      {
+        returnDocument: "after",
+      },
+    );
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        msg: "Failed to update user",
+        error: "no User found match the ID",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      msg: "User updated successfully",
+      data: user,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      msg: "Failed to update User",
+      error: "Internal server error",
+    });
+  }
 };
 export const deleteLogedUser = async (req, res, next) => {
   req.params.id = req.user._id;
