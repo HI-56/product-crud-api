@@ -1,23 +1,23 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 export default function EditMyInfo({ open, setOpen }) {
-
-
   const [file, setFile] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   const inputRef = useRef(null);
 
-  const updateAvatar = async () => {
+  const updateInfo = async () => {
     try {
-      if (!file) return;
       const formData = new FormData();
-
       formData.append("avatar", file);
-      const response = await axios.post(
-        `http://localhost:3000/api/v1/users/upload`,
+      formData.append("name", name);
+      formData.append("email", email);
+      formData.append("phone", phone);
+      const response = await axios.patch(
+        `http://localhost:3000/api/v1/users/me`,
         formData,
         {
           headers: {
@@ -26,36 +26,27 @@ export default function EditMyInfo({ open, setOpen }) {
         },
       );
       console.log(response.data);
+      return true;
     } catch (error) {
       console.log(error.response.data);
-      setLoading(false);
-    }
-  };
-  const updateInfo = async () => {
-    try {
-      const response = await axios.patch(
-        `http://localhost:3000/api/v1/users/me`,
-        { name, email, phone },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        },
-      );
-      console.log(response.data);
-    } catch (error) {
-      console.log(error.response.data);
-      setLoading(false);
+      const message =
+        error.response?.data?.errors?.[0]?.msg || error.response?.data?.error;
+      setErrorMsg(message);
+      return false;
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setErrorMsg("");
+
     try {
-      await updateAvatar();
-      await updateInfo();
-      setOpen(false);
+      const success = await updateInfo();
+
+      if (success) {
+        setOpen(false);
+      }
     } finally {
       setLoading(false);
     }
@@ -133,9 +124,14 @@ export default function EditMyInfo({ open, setOpen }) {
                 onChange={(e) => setPhone(e.target.value)}
               />
             </div>
-
+            {errorMsg && (
+              <div className=" w-full">
+                <span className="text-red-500">{errorMsg}</span>
+              </div>
+            )}
             <div className="flex flex-row justify-center gap-30 w-full mt-10">
               <button
+                type="button"
                 onClick={() => {
                   setFile("");
                   setOpen(false);

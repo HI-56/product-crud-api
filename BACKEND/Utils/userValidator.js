@@ -28,14 +28,21 @@ export const userCreateValidator = [
   Validator,
 ];
 export const userUpdateValidator = [
-  check("email").optional().custom((value) => {
-    if (!value.includes("@")) {
-      throw new Error("invalid email");
-    }
-    return true;
-  }),
-  check("phone")
+  check("email")
     .optional()
+    .custom((value) => {
+      if (value === "") {
+        return true;
+      }
+
+      if (!value.includes("@")) {
+        throw new Error("invalid email");
+      }
+
+      return true;
+    }),
+  check("phone")
+    .optional({ values: "falsy" })
     .isMobilePhone("ar-MA")
     .withMessage("you should enter a moroccan number"),
 

@@ -3,6 +3,7 @@ import products from "../Models/productsModel.js";
 import jwt from "jsonwebtoken";
 import bcrypt, { hash } from "bcryptjs";
 import { ApiError } from "../Utils/apiError.js";
+import fs from "fs/promises";
 
 export const getUsers = async (query) => {
   const limit = parseInt(query.limit) || 10;
@@ -85,19 +86,7 @@ export const updateLogedUserPswd = async (req, res, next) => {
 
 export const updateLogedUser = async (req, res, next) => {
   try {
-    const user = await users.findOneAndUpdate(
-      { _id: req.user._id },
-      {
-        $set: {
-          name: body.name,
-          email: body.email,
-          phone: body.phone,
-        },
-      },
-      {
-        returnDocument: "after",
-      },
-    );
+    const user = await users.findById(req.user._id);
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -105,6 +94,32 @@ export const updateLogedUser = async (req, res, next) => {
         error: "no User found match the ID",
       });
     }
+
+    const oldAvatar = user.avatar;
+console.log(user);
+    if (req.body.name !== "") {
+      user.name = req.body.name;
+    }
+
+    if (req.body.email !== "") {
+      user.email = req.body.email;
+    }
+
+    if (req.body.phone !== "") {
+      user.phone = req.body.phone;
+    }
+
+    if (req.file) {
+      user.avatar = req.file.path;
+    }
+    await user.save();
+    console.log("############################################");
+    
+
+    if (req.file && oldAvatar) {
+      await fs.unlink(oldAvatar);
+    }
+
     return res.status(200).json({
       success: true,
       msg: "User updated successfully",

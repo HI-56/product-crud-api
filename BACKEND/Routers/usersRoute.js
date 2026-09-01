@@ -29,7 +29,7 @@ router.use(protect, allowedTo("admin", "user"));
 router
   .route("/me")
   .get(getMe, getUserById)
-  .patch(userUpdateValidator, updateLogedUser)
+  .patch(upload.single("avatar"), userUpdateValidator, updateLogedUser)
   .delete(deleteLogedUser, deleteUserById);
 router.post("/upload", upload.single("avatar"), uploadAvatar);
 

@@ -23,6 +23,7 @@ export function AuthProvider({ children }) {
       console.log("ME:", data);
       setUser(data.user);
     } catch (error) {
+      console.log(error)
       if (error.response?.status === 401) {
         localStorage.removeItem("token");
         setUser(null);
