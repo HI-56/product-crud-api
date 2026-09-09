@@ -1,13 +1,21 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 
-export default function EditUsersInfo({ open, setOpen, endPoint }) {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [role, setRole] = useState("");
+export default function EditUsersInfo({ open, setOpen, endPoint, user }) {
+  const [name, setName] = useState(user.name);
+  const [email, setEmail] = useState(user.email);
+  const [phone, setPhone] = useState(user.phone);
+  const [role, setRole] = useState("user");
   const [loading, setLoading] = useState(false);
-
+  const [errorMsg, setErrorMsg] = useState("");
+  useEffect(() => {
+    if (user) {
+      setName(user.name || "");
+      setEmail(user.email || "");
+      setPhone(user.phone || "");
+      setRole(user.role || "");
+    }
+  }, [user]);
   const updateInfo = async () => {
     try {
       const response = await axios.patch(
@@ -19,19 +27,32 @@ export default function EditUsersInfo({ open, setOpen, endPoint }) {
           },
         },
       );
-      console.log(response.data);
+
+      return true;
     } catch (error) {
       console.log(error.response.data);
+      const message =
+        error.response?.data?.errors?.[0]?.msg || error.response?.data?.error;
+      setErrorMsg(message);
       setLoading(false);
+      return false;
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!name && !email && !phone && !role) {
+      setErrorMsg("Please change at least one field");
+      return;
+    }
     setLoading(true);
+    setErrorMsg("");
     try {
-      await updateInfo();
-      setOpen(false);
+      const success = await updateInfo();
+
+      if (success) {
+        setOpen(false);
+      }
     } finally {
       setLoading(false);
     }
@@ -89,10 +110,16 @@ export default function EditUsersInfo({ open, setOpen, endPoint }) {
                 onChange={(e) => setPhone(e.target.value)}
               />
             </div>
+            {errorMsg && (
+              <div className=" w-full">
+                <span className="text-red-500 text-base">{errorMsg}</span>
+              </div>
+            )}
             <div className="flex flex-row justify-center gap-30 w-full mt-10">
               <button
                 type="button"
                 onClick={() => {
+                  setErrorMsg("");
                   setOpen(false);
                 }}
                 className="border border-red-600 rounded-xl text-red-600 cursor-pointer px-2  bg-red-600/25"

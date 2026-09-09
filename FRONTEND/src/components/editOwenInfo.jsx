@@ -1,14 +1,20 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
-export default function EditMyInfo({ open, setOpen }) {
+export default function EditMyInfo({ open, setOpen, user }) {
   const [file, setFile] = useState("");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const [name, setName] = useState(user.name);
+  const [email, setEmail] = useState(user.email);
+  const [phone, setPhone] = useState(user.phone);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const inputRef = useRef(null);
-
+  useEffect(() => {
+    if (user) {
+      setName(user.name || "");
+      setEmail(user.email || "");
+      setPhone(user.phone || "");
+    }
+  }, [user]);
   const updateInfo = async () => {
     try {
       const formData = new FormData();
@@ -25,7 +31,6 @@ export default function EditMyInfo({ open, setOpen }) {
           },
         },
       );
-      console.log(response.data);
       return true;
     } catch (error) {
       console.log(error.response.data);
@@ -38,6 +43,10 @@ export default function EditMyInfo({ open, setOpen }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!name && !email && !phone && !file) {
+      setErrorMsg("Please change at least one field");
+      return;
+    }
     setLoading(true);
     setErrorMsg("");
 
@@ -70,7 +79,11 @@ export default function EditMyInfo({ open, setOpen }) {
                     className="h-20 w-20 rounded-full"
                   />
                 ) : (
-                  "Preview"
+                  <img
+                    src={`http://localhost:3000/${user.avatar}`}
+                    alt="kan hna"
+                    className="h-20 w-20 rounded-full"
+                  />
                 )}
               </div>
               <button
@@ -134,6 +147,7 @@ export default function EditMyInfo({ open, setOpen }) {
                 type="button"
                 onClick={() => {
                   setFile("");
+                  setErrorMsg("");
                   setOpen(false);
                 }}
                 className="border border-red-600 rounded-xl text-red-600 cursor-pointer px-2  bg-red-600/25"

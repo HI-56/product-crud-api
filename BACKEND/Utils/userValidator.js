@@ -29,16 +29,14 @@ export const userCreateValidator = [
 ];
 export const userUpdateValidator = [
   check("email")
-    .optional()
-    .custom((value) => {
-      if (value === "") {
-        return true;
-      }
-
-      if (!value.includes("@")) {
+    .optional({ values: "falsy" })
+    .custom(async (value, { req }) => {
+      if ( !value.includes("@")) {
         throw new Error("invalid email");
       }
-
+      if (await users.findOne({ email: req.body.email })) {
+        throw new Error("this email is used by another user");
+      }
       return true;
     }),
   check("phone")

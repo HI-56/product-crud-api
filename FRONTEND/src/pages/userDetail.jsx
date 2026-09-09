@@ -4,7 +4,6 @@ import axios from "axios";
 import EditMyInfo from "../components/editOwenInfo";
 import EditUsersInfo from "../components/adminEditUsers";
 
-
 export default function UserDetail() {
   const { userId } = useParams();
   const [userInfo, setUserInfo] = useState({});
@@ -30,13 +29,15 @@ export default function UserDetail() {
           },
         },
       );
-      setUserInfo(response.data.user);
+
       console.log(response.data);
+      setUserInfo(response?.data?.user);
     } catch (error) {
       showError(error.response.data.error || "something went wrong");
     }
   };
   useEffect(() => {
+  
     getUserInfo();
   }, [userId]);
   return (
@@ -80,10 +81,15 @@ export default function UserDetail() {
                 edit
               </div>
               {endPoint === "me" ? (
-                      <EditMyInfo open={open} setOpen={setOpen} />
-                    ) : (
-                      <EditUsersInfo open={open} setOpen={setOpen} endPoint={endPoint} />
-                    )}
+                <EditMyInfo open={open} setOpen={setOpen} user={userInfo} />
+              ) : (
+                <EditUsersInfo
+                  open={open}
+                  setOpen={setOpen}
+                  endPoint={endPoint}
+                  user={userInfo}
+                />
+              )}
             </>
           </div>
           <div className="mt-5 flex flex-col ">

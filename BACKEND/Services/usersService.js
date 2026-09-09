@@ -21,20 +21,24 @@ export const createUser = async (body) => {
 };
 
 export const updatedUser = async (id, body) => {
-  return await users.findOneAndUpdate(
-    { _id: id },
-    {
-      $set: {
-        name: body.name,
-        email: body.email,
-        phone: body.phone,
-        role: body.role,
-      },
-    },
-    {
-      returnDocument: "after",
-    },
-  );
+  const user = await users.findById(id);
+  if (body.name !== "") {
+    user.name = body.name;
+  }
+
+  if (body.email !== "") {
+    user.email = body.email;
+  }
+
+  if (body.phone !== "") {
+    user.phone = body.phone;
+  }
+
+  if (body.role !== "") {
+    user.role = body.role;
+  }
+  await user.save();
+  return await user;
 };
 
 export const updatedPswd = async (id, body) => {
@@ -96,7 +100,7 @@ export const updateLogedUser = async (req, res, next) => {
     }
 
     const oldAvatar = user.avatar;
-console.log(user);
+    console.log(user);
     if (req.body.name !== "") {
       user.name = req.body.name;
     }
@@ -113,8 +117,6 @@ console.log(user);
       user.avatar = req.file.path;
     }
     await user.save();
-    console.log("############################################");
-    
 
     if (req.file && oldAvatar) {
       await fs.unlink(oldAvatar);

@@ -21,7 +21,6 @@ export default function AdminRoles() {
       );
       setUsers(response.data.users);
       setThisPage(response.data.page);
-      console.log(response.data.users);
     } catch (error) {
       console.log(error);
     }

@@ -80,6 +80,7 @@ export const createNewUser = async (req, res) => {
 export const updateUserById = async (req, res) => {
   try {
     const updated = await updatedUser(req.params.id, req.body);
+    
     if (!updated) {
       return res.status(404).json({
         success: false,
@@ -95,6 +96,7 @@ export const updateUserById = async (req, res) => {
   } catch (err) {
     return res.status(500).json({
       success: false,
+      err,
       msg: "Failed to update User",
       error: "Internal server error",
     });
