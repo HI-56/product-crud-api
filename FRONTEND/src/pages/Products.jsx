@@ -2,18 +2,12 @@ import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-// same status rule your script.js used in submitProducts()
 function statusFromStock(stock) {
   const s = parseInt(stock);
   if (s > 15) return "Active";
   if (s > 0) return "Low Stock";
   return "Out of Stock";
 }
-
-// useEffect(async ()=>{
-// const token = localStorage.getItem("token");
-// const response = axios.post()
-// },[token])
 
 export default function Products() {
   const navigate = useNavigate();
@@ -74,6 +68,7 @@ export default function Products() {
     getProducts();
   }, [page, search, category, status]);
 
+  const totalPages = Math.ceil(inCount / 7);
   const [showAdd, setShowAdd] = useState(false);
   const [showUpdate, setShowUpdate] = useState(false);
   const [editingId, setEditingId] = useState("");
@@ -90,6 +85,7 @@ export default function Products() {
     name: "",
     category: "",
     price: "",
+    stock: "",
   });
   async function handleAddSubmit(e) {
     e.preventDefault();
@@ -124,6 +120,7 @@ export default function Products() {
       name: product.name,
       category: product.category,
       price: product.price,
+      stock: product.stock,
     });
     setShowUpdate(true);
   }
@@ -133,7 +130,10 @@ export default function Products() {
     try {
       const response = await axios.patch(
         `http://localhost:3000/api/v1/products/${editingId}`,
-        updateForm,
+        {
+          ...updateForm,
+          status: statusFromStock(updateForm.stock).toLowerCase(),
+        },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         },
@@ -282,7 +282,7 @@ export default function Products() {
         </table>
         <div className="mb-8">
           <div className="flex flex-row justify-end px-5 gap-8">
-            <span
+            <button
               className="border border-cyan-400 rounded-2xl cursor-pointer px-5 pb-1"
               onClick={() => {
                 if (page > 1) {
@@ -291,18 +291,15 @@ export default function Products() {
               }}
             >
               prev
-            </span>
+            </button>
             <span>Page N°{thisPage}</span>
-            <span
+            <button
               className="border border-cyan-400 rounded-2xl cursor-pointer px-5 pb-1"
-              onClick={() => {
-                if (products.length === 7) {
-                  setPage((prev) => prev + 1);
-                }
-              }}
+              disabled={page >= totalPages}
+              onClick={() => setPage((prev) => prev + 1)}
             >
               next
-            </span>
+            </button>
           </div>
         </div>
 
@@ -455,6 +452,18 @@ export default function Products() {
                 value={updateForm.price}
                 onChange={(e) =>
                   setUpdateForm({ ...updateForm, price: e.target.value })
+                }
+                className="ml-10 border rounded-md"
+              />
+            </label>
+            <label>
+              Product stock :
+              <input
+                type="number"
+                required
+                value={updateForm.stock}
+                onChange={(e) =>
+                  setUpdateForm({ ...updateForm, stock: e.target.value })
                 }
                 className="ml-10 border rounded-md"
               />

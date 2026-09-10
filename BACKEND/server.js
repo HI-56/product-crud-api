@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import DBconnect from "./Config/db.js";
 import dns from "dns";
 import productRouter from "./Routers/productsRoute.js";
+import customerRouter from "./Routers/customersRoute.js"
 import userRouter from "./Routers/usersRoute.js";
 import authRouter from "./Routers/authRouter.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
@@ -20,6 +21,7 @@ app.use("/uploads", express.static("uploads"));
 app.use("/api/v1/products", productRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/customers", customerRouter);
 
 
 app.use(errorHandler);
