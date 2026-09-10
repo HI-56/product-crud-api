@@ -4,16 +4,16 @@ export const getCustomers = async (user, query) => {
   const limit = parseInt(query.limit) || 10;
   const page = parseInt(query.page) || 1;
   const skip = limit * (page - 1);
-  // const search = query.search;
+  const search = query.search;
   // const category = query.category?.trim();
   // const status = query.status;
   const findCondition = { user: user._id };
-  // if (search) {
-  //   findCondition.name = {
-  //     $regex: search,
-  //     $options: "i",
-  //   };
-  // }
+  if (search) {
+    findCondition.name = {
+      $regex: search,
+      $options: "i",
+    };
+  }
   // if (category) {
   //   findCondition.category = {
   //     $regex: `^${category}$`,

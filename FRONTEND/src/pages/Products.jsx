@@ -229,7 +229,7 @@ export default function Products() {
 
         <table className="w-full border-collapse my-5 rounded-xl overflow-hidden">
           <thead className="bg-slate-800 text-white">
-            <tr>
+            <tr className="border-b border-slate-200 dark:border-slate-700 text-left text-slate-500">
               <th className="p-3 text-left">ID</th>
               <th className="p-3 text-left">Product</th>
               <th className="p-3 text-left">category</th>
@@ -250,7 +250,7 @@ export default function Products() {
               products.map((p) => (
                 <tr
                   key={p._id}
-                  className="border-b border-gray-300 even:bg-slate-800/70 hover:bg-active cursor-pointer"
+                  className="border-b last:border-0 border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                 >
                   <td className="p-3">{p._id.slice(-4)}</td>
                   <td className="p-3">{p.name}</td>
