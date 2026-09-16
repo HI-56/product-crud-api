@@ -5,8 +5,7 @@ export const getCustomers = async (user, query) => {
   const page = parseInt(query.page) || 1;
   const skip = limit * (page - 1);
   const search = query.search;
-  // const category = query.category?.trim();
-  // const status = query.status;
+  const status = query.status;
   const findCondition = { user: user._id };
   if (search) {
     findCondition.name = {
@@ -14,19 +13,10 @@ export const getCustomers = async (user, query) => {
       $options: "i",
     };
   }
-  // if (category) {
-  //   findCondition.category = {
-  //     $regex: `^${category}$`,
-  //     $options: "i",
-  //   };
-  // }
-
-  // if (status) {
-  //   findCondition.status = {
-  //     $regex: `^${status}$`,
-  //     $options: "i",
-  //   };
-  // }
+ if (status) {
+  findCondition.status = status;
+}
+ 
   return await Customers.find(findCondition).skip(skip).limit(limit);
 };
 export const filtration = async (user, query) => {

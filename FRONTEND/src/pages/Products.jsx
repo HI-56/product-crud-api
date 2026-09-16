@@ -257,7 +257,19 @@ export default function Products() {
                   <td className="p-3">{p.category}</td>
                   <td className="p-3">{p.price} DH</td>
                   <td className="p-3">{p.stock} unity</td>
-                  <td className="p-3">{p.status}</td>
+                  <td className="px-4 py-3">
+                    <span
+                      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                        p.status === "active"
+                          ? " bg-emerald-500/10 text-emerald-400"
+                          : p.status === "low stock"
+                            ? " bg-yellow-800 text-yellow-400"
+                            : " bg-red-800 text-red-300"
+                      }`}
+                    >
+                      {p.status}
+                    </span>
+                  </td>
                   <td className="p-3">
                     <button
                       onClick={() => {

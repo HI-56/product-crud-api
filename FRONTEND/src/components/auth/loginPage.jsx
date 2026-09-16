@@ -101,6 +101,12 @@ export default function Login() {
           >
             Forgot password
           </p>
+          <p
+            className="text-black-300 hover:underline underline-offset-4 cursor-pointer pt-5"
+            onClick={() => navigate("/")}
+          >
+            Back Home
+          </p>
         </div>
       </div>
     </>

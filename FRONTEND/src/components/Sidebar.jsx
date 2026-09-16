@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../context/authContext";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
@@ -42,7 +42,7 @@ function NavItem({ to, icon, label }) {
 
 export default function Sidebar() {
   const { user, setUser } = useContext(AuthContext);
-  console.log(user);
+  const [showLogOut, setShowLogOut] = useState(false);
   const navigate = useNavigate();
 
   const bottomItems = [
@@ -84,13 +84,44 @@ export default function Sidebar() {
         <button
           className="text-red-500 border border-red-500 rounded px-2 py-1 hover:bg-red-500 hover:text-white transition-colors cursor-pointer"
           onClick={() => {
-            localStorage.removeItem("token");
-            navigate("/");
-            setUser(null);
+            setShowLogOut(true);
           }}
         >
           <i className="fa-solid fa-arrow-right-from-bracket"></i>
         </button>
+        {showLogOut && (
+          <div
+            className="fixed inset-0 flex justify-center items-center bg-black/50"
+            onClick={(e) =>
+              e.target === e.currentTarget && setShowDelete(false)
+            }
+          >
+            <div className="bg-white rounded-3xl text-lg h-42 w-110 text-black py-10 px-7 gap-6 flex flex-col justify-center items-center">
+              <p>Are you sure you want to LogOut from this account ? </p>
+              <div className="flex flex-row gap-30 text-base font-semibold">
+                <button
+                  onClick={() => {
+                    localStorage.removeItem("token");
+                    navigate("/");
+                    setUser(null);
+                    setShowLogOut(false);
+                  }}
+                  className="border border-red-400 py-0.5 px-4 rounded-xl bg-red-400/10 text-red-700 cursor-pointer hover:bg-red-600 hover:text-white transition-all duration-300 "
+                >
+                  Yes
+                </button>
+                <button
+                  onClick={() => {
+                    setShowLogOut(false);
+                  }}
+                  className="border border-blue-400 py-0.5 px-4 rounded-xl bg-blue-400/10 text-blue-700 cursor-pointer  hover:bg-blue-600 hover:text-white transition-all duration-300 "
+                >
+                  No
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   );

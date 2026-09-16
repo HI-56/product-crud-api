@@ -35,7 +35,7 @@ export default function Register() {
     } catch (err) {
       setLoading(false);
       console.log(err.response?.data);
-      setErrorMsg(err.response?.data.errors[0].msg);
+      setErrorMsg(err.response?.data.errors[0].msg || "somthing wrong");
     }
   };
   return (

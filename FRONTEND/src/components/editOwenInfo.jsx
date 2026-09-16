@@ -19,9 +19,9 @@ export default function EditMyInfo({ open, setOpen, user }) {
     try {
       const formData = new FormData();
       formData.append("avatar", file);
-      formData.append("name", name);
-      formData.append("email", email);
-      formData.append("phone", phone);
+      formData.append("name", name === user.name ? "" : name);
+      formData.append("email", email === user.email ? "" : email);
+      formData.append("phone", phone === user.phone ? "" : phone);
       const response = await axios.patch(
         `http://localhost:3000/api/v1/users/me`,
         formData,
