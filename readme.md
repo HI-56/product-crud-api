@@ -282,7 +282,7 @@ project/
 ### 1. Clone the repository
 
 ```bash
-git clone <your-repository-url>
+git clone <this-repository-url>
 cd <project-folder>
 ```
 
